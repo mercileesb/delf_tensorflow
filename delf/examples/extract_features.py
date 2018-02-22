@@ -462,7 +462,7 @@ if __name__ == '__main__':
   parser.add_argument(
       '--batch_size',
       type=int,
-      default='10',
+      default=10,
       help="""
         Batch size for extraction
         """)
