@@ -47,7 +47,7 @@ _STATUS_CHECK_ITERATIONS = 100
 
 # Set batch size
 
-_BATCH_SIZE = 10
+
 
 def _ReadImageList(list_path):
   """Helper function to read image paths.
@@ -428,7 +428,7 @@ def main(unused_argv):
   tf.logging.info('Reading list of images...')
   image_paths = _ReadImageList(cmd_args.list_images_path)
   print ("SIZE : {}".format(len(image_paths)))
-  file_ = list(chunks(image_paths, _BATCH_SIZE))
+  file_ = list(chunks(image_paths, cmd_args.batch_size))
   for chunk_list in file_:
     batch_get_feature(chunk_list, cmd_args.config_path, cmd_args.output_dir)
 
@@ -459,5 +459,12 @@ if __name__ == '__main__':
       Directory where DELF features will be written to. Each image's features
       will be written to a file with same name, and extension replaced by .delf.
       """)
+  parser.add_argument(
+      '--batch_size',
+      type=int,
+      default='10',
+      help="""
+        Batch size for extraction
+        """)
   cmd_args, unparsed = parser.parse_known_args()
   app.run(main=main, argv=[sys.argv[0]] + unparsed)
