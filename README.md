@@ -3,11 +3,12 @@
 
 This project is wrapper of [DELF Tensorflow code](https://github.com/tensorflow/models/tree/master/research/delf) (introduced
 in the paper ["Large-Scale Image Retrieval with Attentive Deep Local Features"](https://arxiv.org/abs/1612.06321)) and
-[DELF_Enhanced](https://github.com/insikk/delf_enhanced) (wrapper of [DELF Tensorflow code])
+[DELF_Enhanced](https://github.com/insikk/delf_enhanced) (wrapper of [DELF Tensorflow code]).
 
 A simple application is also illustrated, where two images containing the same landmark can be matched to each other, to obtain local image correspondences.
 
 When I extract Large scale Image, such as 4K image above, Original code has OOM problem, So I modified image size and batch processing to add some lines simply.
+
 
 
 
@@ -40,6 +41,8 @@ Proc. ICCV'17
 ```
 
 ## Reference
+
+You can find nice examples in below page !
 
 * [DELF_Enhanced](https://github.com/insikk/delf_enhanced)
 
