@@ -7,7 +7,7 @@ in the paper ["Large-Scale Image Retrieval with Attentive Deep Local Features"](
 
 A simple application is also illustrated, where two images containing the same landmark can be matched to each other, to obtain local image correspondences.
 
-When I extract Large scale Image, such as 4K image above, Original code has OOM problem, So I modified image size and batch processing to add some lines simply.
+When I extract Large scale Image, such as 4K image above, Original code has OOM problem, So I modified fixed size and batch to add some lines simply.
 
 
 
