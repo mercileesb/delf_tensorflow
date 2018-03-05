@@ -123,81 +123,87 @@ def get_attention_image_byte(att_score):
   im.save(buf, 'PNG')
   return buf.getvalue()
 
-    
-
-def get_ransac_image_byte(img_1, locations_1, descriptors_1, img_2, locations_2, descriptors_2, save_path=None, use_opencv_match_vis=True):
-  """
-  Args:
-      img_1: image bytes. JPEG, PNG
-      img_2: image bytes. JPEG, PNG
-
-  Return:
-      ransacn result PNG image as byte
-      score: number of matching inlier
-  """
-
-  # Convert image byte to 3 channel numpy array
-  with Image.open(io.BytesIO(img_1)) as img:
-    img_1 = load_image_into_numpy_array(img)
-  with Image.open(io.BytesIO(img_2)) as img:
-    img_2 = load_image_into_numpy_array(img)
-
-  inliers, locations_1_to_use, locations_2_to_use = get_inliers(locations_1, descriptors_1, locations_2, descriptors_2)
-
-  # Visualize correspondences, and save to file.
-  fig, ax = plt.subplots(figsize=IMAGE_SIZE)
-  inlier_idxs = np.nonzero(inliers)[0]
-  score = sum(inliers)
-  if score is None:
-    score = 0
-#   # For different size of image, transform img_1 to fit to img_2
-#   print('img_1 shape', img_1.shape)
-#   print('img_1 type', type(img_1))
-#   print('img_2 shape', img_2.shape)
-
-#   ratio = float(img_2.shape[1]) / img_1.shape[1]
-#   print('ratio', ratio)
-
-#   resize_img_1 = imresize(img_1, ratio, interp='bilinear', mode=None)
-#   print('resize_img_1 shape', resize_img_1.shape)
-
-  if use_opencv_match_vis:
-    inlier_matches = []
-    for idx in inlier_idxs:
-        inlier_matches.append(cv2.DMatch(idx, idx, 0))
-        
-    kp1 =[]
-    for point in locations_1_to_use:
-        kp = cv2.KeyPoint(point[1], point[0], _size=1)
-        kp1.append(kp)
-
-    kp2 =[]
-    for point in locations_2_to_use:
-        kp = cv2.KeyPoint(point[1], point[0], _size=1)
-        kp2.append(kp)
 
 
-    ransac_img = cv2.drawMatches(img_1, kp1, img_2, kp2, inlier_matches, None, flags=0)
-    ransac_img = cv2.cvtColor(ransac_img, cv2.COLOR_BGR2RGB)    
-    image_byte = cv2.imencode('.png', ransac_img)[1].tostring()
+def get_ransac_image_byte_(img_1_path, locations_1, descriptors_1, img_2_path, locations_2, descriptors_2, save_path=None,
+                          use_opencv_match_vis=True):
+    """
+	Args:
+		img_1: image bytes. JPEG, PNG
+		img_2: image bytes. JPEG, PNG
 
-  else:
-    plot_matches(
-        ax,
-        img_1,
-        img_2,
-        locations_1_to_use,
-        locations_2_to_use,
-        np.column_stack((inlier_idxs, inlier_idxs)),
-        matches_color='b')
-    ax.axis('off')
-    extent = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())      
-    buf = io.BytesIO()
-    fig.savefig(buf, bbox_inches=extent, format='png')
-    plt.close('all') # close resources. 
-    image_byte = buf.getvalue()
+	Return:
+		ransacn result PNG image as byte
+		score: number of matching inlier
+	"""
 
-  return image_byte, score
+    # Convert image byte to 3 channel numpy array
+    # with Image.open(io.BytesIO(img_1)) as img:
+    #     img_1 = load_image_into_numpy_array(img)
+    # with Image.open(io.BytesIO(img_2)) as img:
+    #     img_2 = load_image_into_numpy_array(img)
+    img_1 = cv2.imread(img_1_path)
+    img_2 = cv2.imread(img_2_path)
+    inliers, locations_1_to_use, locations_2_to_use = get_inliers(locations_1, descriptors_1, locations_2,
+                                                                  descriptors_2)
+
+    # Visualize correspondences, and save to file.
+    fig, ax = plt.subplots(figsize=IMAGE_SIZE)
+    inlier_idxs = np.nonzero(inliers)[0]
+    score = sum(inliers)
+    print (score)
+    if score is None:
+        score = 0
+    #   # For different size of image, transform img_1 to fit to img_2
+    #   print('img_1 shape', img_1.shape)
+    #   print('img_1 type', type(img_1))
+    #   print('img_2 shape', img_2.shape)
+
+    #   ratio = float(img_2.shape[1]) / img_1.shape[1]
+    #   print('ratio', ratio)
+
+    #   resize_img_1 = imresize(img_1, ratio, interp='bilinear', mode=None)
+    #   print('resize_img_1 shape', resize_img_1.shape)
+
+    if use_opencv_match_vis:
+        inlier_matches = []
+        for idx in inlier_idxs:
+            inlier_matches.append(cv2.DMatch(idx, idx, 0))
+
+        kp1 = []
+        for point in locations_1_to_use:
+            kp = cv2.KeyPoint(point[1], point[0], _size=1)
+            kp1.append(kp)
+
+        kp2 = []
+        for point in locations_2_to_use:
+            kp = cv2.KeyPoint(point[1], point[0], _size=1)
+            kp2.append(kp)
+
+        ransac_img = cv2.drawMatches(img_1, kp1, img_2, kp2, inlier_matches, None, flags=0)
+        ransac_img = cv2.cvtColor(ransac_img, cv2.COLOR_BGR2RGB)
+        image_byte = cv2.imencode('.png', ransac_img)[1].tostring()
+        cv2.imwrite(save_path, ransac_img)
+
+
+
+    else:
+        plot_matches(
+            ax,
+            img_1,
+            img_2,
+            locations_1_to_use,
+            locations_2_to_use,
+            np.column_stack((inlier_idxs, inlier_idxs)),
+            matches_color='b')
+        ax.axis('off')
+        extent = ax.get_window_extent().transformed(fig.dpi_scale_trans.inverted())
+        buf = io.BytesIO()
+        fig.savefig(buf, bbox_inches=extent, format='png')
+        plt.close('all')  # close resources.
+        image_byte = buf.getvalue()
+
+    return image_byte, score
 
 
 def main(unused_argv):
@@ -211,7 +217,8 @@ def main(unused_argv):
 
   img_1 = mpimg.imread(cmd_args.image_1_path)
   img_2 = mpimg.imread(cmd_args.image_2_path)
-  get_ransac_image_byte(img_1, locations_1, descriptors_1, img_2, locations_2, descriptors_2, cmd_args.output_image)
+  #get_ransac_image_byte(img_1, locations_1, descriptors_1, img_2, locations_2, descriptors_2, cmd_args.output_image)
+  get_ransac_image_byte_(cmd_args.image_1_path, locations_1, descriptors_1, cmd_args.image_2_path, locations_2, descriptors_2, cmd_args.output_image)
   
 
 if __name__ == '__main__':
