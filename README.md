@@ -10,6 +10,9 @@ A simple application is also illustrated, where two images containing the same l
 When I extract Large scale Image, such as 4K image above, Original code has OOM problem, So I modified fixed size and batch to add some lines simply.
 
 
+* Add batch processing and image size for GPU limitation  
+* Modified "match_images.py" for image open error and save output 
+
 
 
 ## Installation
@@ -46,4 +49,6 @@ You can find nice examples below page !
 
 * [DELF_Enhanced](https://github.com/insikk/delf_enhanced)
 
+## Author
 
+Seungbin Lee
